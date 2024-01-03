@@ -1,65 +1,100 @@
-﻿using System.Net;
+﻿using System.Net.Http;
 using System.Text.RegularExpressions;
+using System.Collections.Concurrent;
 
 
 namespace DecisionSystemForRealEastateInvestment.Application.DataManagement
 {
-    // TODO: Klasa do sterowania scraperem Nieruchomosci-Online
-    // nieruchomosci-online można odpytywać podając po 'szukaj.html?' zapytanie
-    // `3,mieszkanie,sprzedaz,` - część stała zapytania
-    // a parametry które chcemy zmienić wymieniamy kolejno po przecinku:
-    // idk, MIASTO, idk, idk, idk, idk, CENA_OD-CENA_DO, METRY_OD-METRY_DO, idk, idk, idk, idk, idk, POKOJE_OD-POKOJE-DO
-    // przykład: "https://krakow.nieruchomosci-online.pl/szukaj.html?3,mieszkanie,sprzedaz,,Kraków,,,,50000-750000,20-100,,,,,,1-9"
-    // można również przejść na konkretną stronę z ogłoszeniami dodając do zapytania '&p=NUMER_STRONY'
-    // przykład: "https://krakow.nieruchomosci-online.pl/szukaj.html?3,mieszkanie,sprzedaz,,Kraków&p=2"
-    // Myślę, że można to wykorzystać, by sterować scraperem by od razu wyszukiwał wszystkie oferty z danego miasta i żeby wiedział jak przejść na kolejne strony z ofertami.
-    internal class NieruchomosciOnlineScraper : IScraper
+
+    internal class NieruchomosciOnlineController
     {
-        public List<DataModel> DataModels { get; private set; } = new List<DataModel>();
+        private string baseURL = "https://krakow.nieruchomosci-online.pl/szukaj.html?3,mieszkanie,sprzedaz,";
+        public string City { get; set; }
 
-        public void Scrape(string url)
+        public NieruchomosciOnlineController(string city)
         {
-            using (var webClient = new WebClient())
+            City = city;
+        }
+
+        public string BuildQueryURL(int pageNumber)
+        {
+            return $"{baseURL},{City}&p={pageNumber}";
+        }
+
+        public async Task Run(NieruchomosciOnlineScraper scraper, int startPage, int endPage)
+        {
+            if (startPage < 1)
             {
+                startPage = 1;
+            }
+            if (endPage < startPage)
+            {
+                throw new Exception("endPage has to be >= startPage");
+            }
+            var scrapingTasks = new List<Task>();
+            for (int i = startPage; i <= endPage; i++)
+            {
+                string url = BuildQueryURL(i);
+                scrapingTasks.Add(scraper.Scrape(url));
+            }
+
+            await Task.WhenAll(scrapingTasks);
+        }
+    }
+    internal class NieruchomosciOnlineScraper  : IScraper
+    {
+        private readonly HttpClient _httpClient = new();
+        private readonly ConcurrentBag<DataModel> _dataModels = new();
+
+        public List<DataModel> DataModels => new(_dataModels);
+
+        public async Task Scrape(string url)
+        {
+            var offerLinks = await ExtractOfferLinksAsync(url);
+            if (offerLinks == null || offerLinks.Count == 0)
+            {
+                Console.WriteLine("No matching links found.");
+                return;
+            }
+
+            foreach (var link in offerLinks)
+            {
+                var offerHtml = await _httpClient.GetStringAsync(link);
                 var htmlDocument = new HtmlAgilityPack.HtmlDocument();
+                htmlDocument.LoadHtml(offerHtml);
 
-                var html = webClient.DownloadString(url);
-                htmlDocument.LoadHtml(html);
-
-                var links = htmlDocument.DocumentNode.SelectNodes("//a[starts-with(@href, 'https://krakow.nieruchomosci-online.pl/')]");
-                if (links == null || links.Count == 0)
+                var dataModel = ExtractDataModel(htmlDocument, link);
+                if (dataModel != null)
                 {
-                    Console.WriteLine("No matching links found.");
-                    return;
-                }
-
-                var offerLinks = new HashSet<string>();
-                foreach (var link in links)
-                {
-                    // Don't include links to other offer pages
-                    if (link.Attributes["href"].Value.Contains("szukaj.html?"))
-                    {
-                        continue;
-                    }
-                    offerLinks.Add(link.Attributes["href"].Value);
-                }
-
-                foreach (var link in offerLinks)
-                {
-                    var offerHtml = webClient.DownloadString(link);
-                    htmlDocument.LoadHtml(offerHtml);
-
-                    var dataModel = ExtractDataModel(htmlDocument, link);
-                    if (dataModel != null)
-                    {
-                        DataModels.Add(dataModel.Value);
-                    }
+                    _dataModels.Add(dataModel.Value);
                 }
             }
         }
 
+        private async Task<HashSet<string>?> ExtractOfferLinksAsync(string url)
+        {
+            var html = await _httpClient.GetStringAsync(url);
+            var htmlDocument = new HtmlAgilityPack.HtmlDocument();
+            htmlDocument.LoadHtml(html);
 
-        private DataModel? ExtractDataModel(HtmlAgilityPack.HtmlDocument htmlDocument, string offerLink)
+            var links = htmlDocument.DocumentNode.SelectNodes("//a[starts-with(@href, 'https://krakow.nieruchomosci-online.pl/')]");
+            if (links == null)
+            {
+                return null;
+            }
+
+            var offerLinks = new HashSet<string>();
+            foreach (var link in links)
+            {
+                if (!link.Attributes["href"].Value.Contains("szukaj.html?"))
+                {
+                    offerLinks.Add(link.Attributes["href"].Value);
+                }
+            }
+            return offerLinks;
+        }
+
+        private static DataModel? ExtractDataModel(HtmlAgilityPack.HtmlDocument htmlDocument, string offerLink)
         {
             Console.WriteLine($"Extracting data model for {offerLink}");
 
@@ -85,7 +120,7 @@ namespace DecisionSystemForRealEastateInvestment.Application.DataManagement
             }
         }
 
-        private static string ExtractOfferName(HtmlAgilityPack.HtmlDocument htmlDocument)
+        private static string? ExtractOfferName(HtmlAgilityPack.HtmlDocument htmlDocument)
         {
             var nameNode = htmlDocument.DocumentNode.SelectSingleNode("//h1[@class='header-b mod-c desktop h1Title']");
             if (nameNode != null)
@@ -95,11 +130,11 @@ namespace DecisionSystemForRealEastateInvestment.Application.DataManagement
             else
             {
                 Console.WriteLine("Offer name not found.");
-                return string.Empty;
+                return null;
             }
         }
 
-        private static string ExtractOfferDescription(HtmlAgilityPack.HtmlDocument htmlDocument)
+        private static string? ExtractOfferDescription(HtmlAgilityPack.HtmlDocument htmlDocument)
         {
             var descriptionNode = htmlDocument.DocumentNode.SelectSingleNode("//div[@id='boxCustomDesc']/div[@class='estate-desc-less']/p[1]");
 
@@ -110,11 +145,11 @@ namespace DecisionSystemForRealEastateInvestment.Application.DataManagement
             else
             {
                 Console.WriteLine("Offer description not found.");
-                return string.Empty;
+                return null;
             }
         }
 
-        private static double ExtractArea(HtmlAgilityPack.HtmlDocument htmlDocument)
+        private static double? ExtractArea(HtmlAgilityPack.HtmlDocument htmlDocument)
         {
             try
             {
@@ -128,7 +163,7 @@ namespace DecisionSystemForRealEastateInvestment.Application.DataManagement
                 else
                 {
                     Console.WriteLine("Failed to parse area.");
-                    return -1;
+                    return null;
                 }
             }
             catch (Exception ex)
@@ -138,36 +173,36 @@ namespace DecisionSystemForRealEastateInvestment.Application.DataManagement
             }
         }
 
-        private static double ExtractPrice(HtmlAgilityPack.HtmlDocument htmlDocument)
+        private static double? ExtractPrice(HtmlAgilityPack.HtmlDocument htmlDocument)
         {
-            try
+            var priceNode = htmlDocument.DocumentNode.SelectSingleNode("//strong[text()='Cena:']/following-sibling::span");
+            if (priceNode == null)
             {
-                var priceNode = htmlDocument.DocumentNode.SelectSingleNode("//strong[text()='Cena:']/following-sibling::span");
-                var priceText = priceNode.InnerText.Replace("&nbsp;", "").Replace("zł", "").Split(" ")[0];
-
-                if (double.TryParse(priceText, out double price))
-                {
-                    return price;
-                }
-                else
-                {
-                    Console.WriteLine("Failed to parse price.");
-                    return -1;
-                }
+                return null;
             }
-            catch (Exception ex)
+            var priceText = priceNode.InnerText.Replace("&nbsp;", "").Replace("zł", "").Split(" ")[0];
+
+            if (double.TryParse(priceText, out double price))
             {
-                Console.WriteLine($"Error extracting price: {ex.Message}");
-                throw;
+                return price;
+            }
+            else
+            {
+                Console.WriteLine("Failed to parse price.");
+                return null;
             }
         }
 
-        private static int ExtractRoomsCount(HtmlAgilityPack.HtmlDocument htmlDocument)
+        private static int? ExtractRoomsCount(HtmlAgilityPack.HtmlDocument htmlDocument)
         {
             try
             {
                 var roomsNode = htmlDocument.DocumentNode.SelectSingleNode("//strong[text()='Charakterystyka mieszkania:']/following-sibling::span");
-                var roomsText = roomsNode?.InnerText.Replace("&nbsp;", "").Split(',')[2].Trim();
+                if (roomsNode == null)
+                {
+                    return null;
+                }
+                var roomsText = roomsNode.InnerText.Replace("&nbsp;", "").Split(',')[2].Trim();
                 var roomsCount = ExtractTheNumberAStringStartsWith(roomsText);
                 if (roomsCount != null)
                 {
@@ -176,7 +211,7 @@ namespace DecisionSystemForRealEastateInvestment.Application.DataManagement
                 else
                 {
                     Console.WriteLine("Failed to parse rooms count.");
-                    return -1;
+                    return null;
                 }
             }
             catch (Exception ex)
@@ -186,12 +221,16 @@ namespace DecisionSystemForRealEastateInvestment.Application.DataManagement
             }
         }
 
-        private static int ExtractBathRoomsCount(HtmlAgilityPack.HtmlDocument htmlDocument)
+        private static int? ExtractBathRoomsCount(HtmlAgilityPack.HtmlDocument htmlDocument)
         {
             try
             {
                 var bathroomsNode = htmlDocument.DocumentNode.SelectSingleNode("//strong[text()='Charakterystyka mieszkania:']/following-sibling::span");
-                var batchroomsText = bathroomsNode?.InnerText.Replace("&nbsp;", "").Split(',')[3].Trim();
+                if (bathroomsNode == null)
+                {
+                    return null;
+                }
+                var batchroomsText = bathroomsNode.InnerText.Replace("&nbsp;", "").Split(',')[3].Trim();
                 var bathroomsCount = ExtractTheNumberAStringStartsWith(batchroomsText);
                 if (bathroomsCount != null)
                 {
@@ -200,7 +239,7 @@ namespace DecisionSystemForRealEastateInvestment.Application.DataManagement
                 else
                 {
                     Console.WriteLine("Failed to parse bathrooms count.");
-                    return -1;
+                    return null;
                 }
             }
             catch (Exception ex)

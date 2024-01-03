@@ -12,7 +12,7 @@ namespace DecisionSystemForRealEastateInvestment.Application.DataManagement
         public List<DataModel> DataModels { get; private set; }
 
         public OtoDomScraper() { }
-        public void Scrape(string url)
+        public Task Scrape(string url)
         {
             throw new NotImplementedException();
         }

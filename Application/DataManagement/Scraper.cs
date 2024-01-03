@@ -9,6 +9,6 @@ namespace DecisionSystemForRealEastateInvestment.Application.DataManagement
     internal interface IScraper
     {
         List<DataModel> DataModels { get; }
-        void Scrape(string url);
+        public Task Scrape(string url);
     }
 }

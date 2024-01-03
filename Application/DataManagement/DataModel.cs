@@ -12,24 +12,24 @@ namespace DecisionSystemForRealEastateInvestment.Application.DataManagement
     {
         public string Id { get; }
 
-        public string Name { get; }
-        public string Description { get; }
+        public string? Name { get; }
+        public string? Description { get; }
 
-        public double Area { get; }
+        public double? Area { get; }
 
-        public double Price { get; }
+        public double? Price { get; }
 
         public bool IsActive { get; }
 
         public string Url { get; }
 
-        public int RoomsCount { get; }
+        public int? RoomsCount { get; }
 
-        public int BathroomsCount { get; }
+        public int? BathroomsCount { get; }
 
         public bool? IsGarageAvailable { get; }
 
-        public DataModel(string id, string name, string description, double area, double price, bool isActive, string url, int roomsCount, int bathroomsCount, bool? isGarageAvailable)
+        public DataModel(string id, string? name, string? description, double? area, double? price, bool isActive, string url, int? roomsCount, int? bathroomsCount, bool? isGarageAvailable)
         {
             Id = id;
             Name = name;
