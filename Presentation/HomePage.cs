@@ -16,5 +16,10 @@ namespace DecisionSystemForRealEastateInvestment
         {
             label1.Text = "Aplikacja stworzona przez MS, D¯, IR";
         }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
