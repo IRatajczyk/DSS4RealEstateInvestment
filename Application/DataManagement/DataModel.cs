@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace DecisionSystemForRealEastateInvestment.Application.DataManagement
@@ -10,24 +12,24 @@ namespace DecisionSystemForRealEastateInvestment.Application.DataManagement
     {
         public string Id { get; }
 
-        public string Name { get;}
-        public string Description { get; }
+        public string? Name { get; }
+        public string? Description { get; }
 
-        public double Area { get; }
+        public double? Area { get; }
 
-        public double Price { get; }
+        public double? Price { get; }
 
         public bool IsActive { get; }
 
         public string Url { get; }
 
-        public int RoomsCount { get; }
+        public int? RoomsCount { get; }
 
-        public int BathroomsCount { get; }
+        public int? BathroomsCount { get; }
 
         public bool? IsGarageAvailable { get; }
 
-        public DataModel(string id, string name, string description, double area, double price, bool isActive, string url, int roomsCount, int bathroomsCount, bool? isGarageAvailable)
+        public DataModel(string id, string? name, string? description, double? area, double? price, bool isActive, string url, int? roomsCount, int? bathroomsCount, bool? isGarageAvailable)
         {
             Id = id;
             Name = name;
@@ -40,10 +42,23 @@ namespace DecisionSystemForRealEastateInvestment.Application.DataManagement
             BathroomsCount = bathroomsCount;
             IsGarageAvailable = isGarageAvailable;
         }
+    }
 
-        override public string ToString()
+    internal static class DataModelUtils
+    {
+        public static void SaveToJson(List<DataModel> dataModels, string fileName)
         {
-            return $"Id: {Id}, Name: {Name}, Description: {Description}, Area: {Area}, Price: {Price}, IsActive: {IsActive}, Url: {Url}, RoomsCount: {RoomsCount}, BathroomsCount: {BathroomsCount}, IsGarageAvailable: {IsGarageAvailable}";
+            try
+            {
+                var jsonString = JsonSerializer.Serialize(dataModels, new JsonSerializerOptions { WriteIndented = true });
+                var filePath = @$"{Environment.CurrentDirectory}\{fileName}";
+                File.WriteAllText(filePath, jsonString);
+                Console.WriteLine($"{fileName} saved to {filePath}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while saving to JSON: {ex.Message}");
+            }
         }
     }
 }

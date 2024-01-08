@@ -7,9 +7,9 @@ using System.Net.Http;
 
 namespace DecisionSystemForRealEastateInvestment.Application.DataManagement
 {
-    internal class OtoDomScraper: IScraper
+    internal class OtoDomScraper : IScraper
     {
-        
+
         public List<DataModel> DataModels { get; private set; }
 
         public OtoDomScraper() { }
