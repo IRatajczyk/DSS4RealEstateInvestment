@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DecisionSystemForRealEastateInvestment.Application.DataManagement
 {
-    internal struct DataModel
+    public struct DataModel
     {
         public string Id { get; }
 
@@ -44,7 +44,7 @@ namespace DecisionSystemForRealEastateInvestment.Application.DataManagement
         }
     }
 
-    internal static class DataModelUtils
+    public static class DataModelUtils
     {
         public static void SaveToJson(List<DataModel> dataModels, string fileName)
         {

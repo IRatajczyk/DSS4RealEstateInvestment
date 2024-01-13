@@ -29,8 +29,7 @@
         private void InitializeComponent()
         {
             pictureBox1 = new PictureBox();
-            textBox1 = new TextBox();
-            label1 = new Label();
+            SpecifyPreferencesButton = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
@@ -43,43 +42,32 @@
             pictureBox1.TabStop = false;
             pictureBox1.Click += pictureBox1_Click;
             // 
-            // textBox1
+            // SpecifyPreferencesButton
             // 
-            textBox1.Location = new Point(472, 55);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(260, 27);
-            textBox1.TabIndex = 1;
-            textBox1.TextChanged += textBox1_TextChanged;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(472, 10);
-            label1.Name = "label1";
-            label1.Size = new Size(50, 20);
-            label1.TabIndex = 2;
-            label1.Text = "label1";
-            label1.Click += label1_Click;
+            SpecifyPreferencesButton.Location = new Point(355, 709);
+            SpecifyPreferencesButton.Name = "SpecifyPreferencesButton";
+            SpecifyPreferencesButton.Size = new Size(210, 29);
+            SpecifyPreferencesButton.TabIndex = 1;
+            SpecifyPreferencesButton.Text = "Specify preferences";
+            SpecifyPreferencesButton.UseVisualStyleBackColor = true;
+            SpecifyPreferencesButton.Click += OnSpecifyPreferencesClick;
             // 
             // HomePage
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
-            Controls.Add(label1);
-            Controls.Add(textBox1);
+            ClientSize = new Size(949, 838);
+            Controls.Add(SpecifyPreferencesButton);
             Controls.Add(pictureBox1);
             Name = "HomePage";
             Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
 
         private PictureBox pictureBox1;
-        private TextBox textBox1;
-        private Label label1;
+        private Button SpecifyPreferencesButton;
     }
 }

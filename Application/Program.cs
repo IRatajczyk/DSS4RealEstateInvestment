@@ -5,7 +5,7 @@ using DecisionSystemForRealEastateInvestment.Application.DataManagement;
 
 namespace DecisionSystemForRealEastateInvestment.Application
 {
-    class Program
+    public class Program
     {
         static async Task Main(string[] args)
         {
@@ -18,5 +18,6 @@ namespace DecisionSystemForRealEastateInvestment.Application
             DataModelUtils.SaveToJson(dataModels: dataModels, fileName: "nieruchomosci-online.json");
             Console.ReadKey();
         }
+
     }
 }
