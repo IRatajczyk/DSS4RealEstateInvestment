@@ -10,5 +10,7 @@ namespace DecisionSystemForRealEastateInvestment.Application.DataManagement
     {
         List<DataModel> DataModels { get; }
         public void Scrape(string url);
+
+
     }
 }

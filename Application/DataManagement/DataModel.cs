@@ -29,6 +29,8 @@ namespace DecisionSystemForRealEastateInvestment.Application.DataManagement
 
         public bool? IsGarageAvailable { get; }
 
+        public double[] Serialized { get => new double[] { Area ?? 0, Price ?? 0, RoomsCount ?? 0, BathroomsCount ?? 0, IsGarageAvailable == true ? 1 : 0 };}
+
         public DataModel(string id, string? name, string? description, double? area, double? price, bool isActive, string url, int? roomsCount, int? bathroomsCount, bool? isGarageAvailable)
         {
             Id = id;
