@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             Price = new Label();
             label2 = new Label();
             label3 = new Label();
@@ -59,6 +60,7 @@
             minNOB = new NumericUpDown();
             ApplyButton = new Button();
             DiscardButton = new Button();
+            timer1 = new System.Windows.Forms.Timer(components);
             ((System.ComponentModel.ISupportInitialize)priceWeight).BeginInit();
             ((System.ComponentModel.ISupportInitialize)areaWeight).BeginInit();
             ((System.ComponentModel.ISupportInitialize)norWeight).BeginInit();
@@ -113,7 +115,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(366, 60);
+            label1.Location = new Point(402, 60);
             label1.Name = "label1";
             label1.Size = new Size(136, 20);
             label1.TabIndex = 4;
@@ -131,6 +133,7 @@
             PriceCheckBox.TabIndex = 5;
             PriceCheckBox.Text = "UseContraints";
             PriceCheckBox.UseVisualStyleBackColor = true;
+            PriceCheckBox.CheckedChanged += PriceChekBox_CheckedChanged;
             // 
             // AreaChekBox
             // 
@@ -143,6 +146,7 @@
             AreaChekBox.TabIndex = 6;
             AreaChekBox.Text = "UseContraints";
             AreaChekBox.UseVisualStyleBackColor = true;
+            AreaChekBox.CheckedChanged += AreaChekBox_CheckedChanged;
             // 
             // NORCheckBox
             // 
@@ -155,6 +159,7 @@
             NORCheckBox.TabIndex = 7;
             NORCheckBox.Text = "UseContraints";
             NORCheckBox.UseVisualStyleBackColor = true;
+            NORCheckBox.CheckedChanged += NORCheckBox_CheckedChanged;
             // 
             // NOBCheckBox
             // 
@@ -167,41 +172,49 @@
             NOBCheckBox.TabIndex = 8;
             NOBCheckBox.Text = "UseContraints";
             NOBCheckBox.UseVisualStyleBackColor = true;
+            NOBCheckBox.CheckedChanged += NOBCheckBox_CheckedChanged;
             // 
             // priceWeight
             // 
-            priceWeight.Location = new Point(366, 106);
+            priceWeight.Location = new Point(402, 106);
             priceWeight.Name = "priceWeight";
             priceWeight.Size = new Size(211, 56);
             priceWeight.TabIndex = 9;
+            priceWeight.Scroll += priceWeight_Scroll;
             // 
             // areaWeight
             // 
-            areaWeight.Location = new Point(366, 206);
+            areaWeight.Location = new Point(402, 206);
             areaWeight.Name = "areaWeight";
             areaWeight.Size = new Size(211, 56);
             areaWeight.TabIndex = 10;
+            areaWeight.Scroll += areaWeight_Scroll;
             // 
             // norWeight
             // 
-            norWeight.Location = new Point(366, 306);
+            norWeight.Location = new Point(402, 306);
             norWeight.Name = "norWeight";
             norWeight.Size = new Size(211, 56);
             norWeight.TabIndex = 11;
+            norWeight.Scroll += norWeight_Scroll;
             // 
             // nobWeight
             // 
-            nobWeight.Location = new Point(366, 406);
+            nobWeight.Location = new Point(402, 406);
             nobWeight.Name = "nobWeight";
             nobWeight.Size = new Size(211, 56);
             nobWeight.TabIndex = 12;
+            nobWeight.Scroll += nobWeight_Scroll;
             // 
             // minPrice
             // 
+            minPrice.Increment = new decimal(new int[] { 100000, 0, 0, 0 });
             minPrice.Location = new Point(143, 110);
+            minPrice.Maximum = new decimal(new int[] { 1500000, 0, 0, 0 });
             minPrice.Name = "minPrice";
             minPrice.Size = new Size(75, 27);
             minPrice.TabIndex = 13;
+            minPrice.ValueChanged += minPrice_ValueChanged;
             // 
             // label5
             // 
@@ -223,10 +236,13 @@
             // 
             // maxPrice
             // 
+            maxPrice.Increment = new decimal(new int[] { 100000, 0, 0, 0 });
             maxPrice.Location = new Point(267, 110);
+            maxPrice.Maximum = new decimal(new int[] { 15000000, 0, 0, 0 });
             maxPrice.Name = "maxPrice";
-            maxPrice.Size = new Size(75, 27);
+            maxPrice.Size = new Size(129, 27);
             maxPrice.TabIndex = 15;
+            maxPrice.ValueChanged += maxPrice_ValueChanged;
             // 
             // label7
             // 
@@ -243,6 +259,7 @@
             maxArea.Name = "maxArea";
             maxArea.Size = new Size(75, 27);
             maxArea.TabIndex = 19;
+            maxArea.ValueChanged += maxArea_ValueChanged;
             // 
             // label8
             // 
@@ -259,6 +276,7 @@
             minArea.Name = "minArea";
             minArea.Size = new Size(75, 27);
             minArea.TabIndex = 17;
+            minArea.ValueChanged += minArea_ValueChanged;
             // 
             // label9
             // 
@@ -275,6 +293,7 @@
             maxNOR.Name = "maxNOR";
             maxNOR.Size = new Size(75, 27);
             maxNOR.TabIndex = 23;
+            maxNOR.ValueChanged += maxNOR_ValueChanged;
             // 
             // label10
             // 
@@ -291,6 +310,7 @@
             minNOR.Name = "minNOR";
             minNOR.Size = new Size(75, 27);
             minNOR.TabIndex = 21;
+            minNOR.ValueChanged += minNOR_ValueChanged;
             // 
             // label11
             // 
@@ -307,6 +327,7 @@
             maxNOB.Name = "maxNOB";
             maxNOB.Size = new Size(75, 27);
             maxNOB.TabIndex = 27;
+            maxNOB.ValueChanged += maxNOB_ValueChanged;
             // 
             // label12
             // 
@@ -323,6 +344,7 @@
             minNOB.Name = "minNOB";
             minNOB.Size = new Size(75, 27);
             minNOB.TabIndex = 25;
+            minNOB.ValueChanged += minNOB_ValueChanged;
             // 
             // ApplyButton
             // 
@@ -343,6 +365,11 @@
             DiscardButton.Text = "Discard";
             DiscardButton.UseVisualStyleBackColor = true;
             DiscardButton.MouseClick += DiscardButton_MouseClick;
+            // 
+            // timer1
+            // 
+            timer1.Interval = 500;
+            timer1.Tick += timer1_Tick;
             // 
             // PreferencePage
             // 
@@ -382,6 +409,7 @@
             Controls.Add(Price);
             Name = "PreferencePage";
             Text = "PreferencePage";
+            Load += PreferencePage_Load;
             ((System.ComponentModel.ISupportInitialize)priceWeight).EndInit();
             ((System.ComponentModel.ISupportInitialize)areaWeight).EndInit();
             ((System.ComponentModel.ISupportInitialize)norWeight).EndInit();
@@ -431,5 +459,6 @@
         private NumericUpDown minNOB;
         private Button ApplyButton;
         private Button DiscardButton;
+        private System.Windows.Forms.Timer timer1;
     }
 }

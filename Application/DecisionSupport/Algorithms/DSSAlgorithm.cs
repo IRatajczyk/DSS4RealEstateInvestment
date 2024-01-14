@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DecisionSystemForRealEastateInvestment.Application.DataManagement;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace DecisionSystemForRealEastateInvestment.Application.DecisionSupport.Algorithms
 {
-    internal class DSSAlgorithm
+    public interface IAlgorithm
     {
+        List<DataModel> GetBestOfferts(List<DataModel> dataModels);
     }
 }

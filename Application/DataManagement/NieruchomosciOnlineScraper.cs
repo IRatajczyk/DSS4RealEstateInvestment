@@ -41,7 +41,7 @@ namespace DecisionSystemForRealEastateInvestment.Application.DataManagement
             await Task.WhenAll(scrapingTasks);
         }
     }
-    internal class NieruchomosciOnlineScraper  : IScraper
+    internal class NieruchomosciOnlineScraper // : IScraper
     {
         private readonly HttpClient _httpClient = new();
         private readonly ConcurrentBag<DataModel> _dataModels = new();

@@ -12,20 +12,36 @@ namespace DecisionSystemForRealEastateInvestment.Application.DecisionSupport.Alg
         public PreferenceManager PreferenceManager { set {
                 preferenceWeights = new double[4];
                 preferenceWeights[0] = value.AreaWeight;
-                preferenceWeights[1] = value.PriceWeight;
+                preferenceWeights[1] = -value.PriceWeight;
                 preferenceWeights[2] = value.RoomsCountWeight;
                 preferenceWeights[3] = value.BathroomsCountWeight;
+                normalizeVector();
             } }
         private double[] preferenceWeights;
         public TOPSIS(PreferenceManager preferenceManager)
         {
             preferenceWeights = new double[4];
             preferenceWeights[0] = preferenceManager.AreaWeight;
-            preferenceWeights[1] = preferenceManager.PriceWeight;
+            preferenceWeights[1] = -preferenceManager.PriceWeight;
             preferenceWeights[2] = preferenceManager.RoomsCountWeight;
             preferenceWeights[3] = preferenceManager.BathroomsCountWeight;
+            normalizeVector();
 
         }
+        private void normalizeVector(double epsilon = 1e-2)
+        {
+            double sum = 0;
+            for (int i = 0; i < preferenceWeights.Length; i++)
+            {
+                sum += preferenceWeights[i] + epsilon;
+            }
+            for (int i = 0; i < preferenceWeights.Length; i++)
+            {
+                preferenceWeights[i] += epsilon;
+                preferenceWeights[i] /= sum;
+            }
+        }
+
         public List<DataModel> GetBestOfferts(List<DataModel> dataModels)
         {
             double[,] data = new double[dataModels.Count, 4];

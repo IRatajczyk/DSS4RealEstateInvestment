@@ -44,6 +44,11 @@ namespace DecisionSystemForRealEastateInvestment.Application.DataManagement
             BathroomsCount = bathroomsCount;
             IsGarageAvailable = isGarageAvailable;
         }
+       
+        override public string ToString()
+        {
+            return $"Name: {Name}\nArea: {Area}\nPrice: {Price}\nRoomsCount: {RoomsCount}\nBathroomsCount: {BathroomsCount}";
+        }
     }
 
     public static class DataModelUtils

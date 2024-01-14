@@ -61,7 +61,15 @@ namespace DecisionSystemForRealEastateInvestment.Application.DecisionSupport
 
         public static PreferenceManager Default()
         {
-            return new PreferenceManager(0.5, 0.5, 0.5, 0.5, new ConstraintWrapper(true), new ConstraintWrapper(true), new ConstraintWrapper(true), new ConstraintWrapper(true));
+            return new PreferenceManager(
+                0.5,
+                0.5, 
+                0.5, 
+                0.5,
+                new ConstraintWrapper(true, 0, 200), 
+                new ConstraintWrapper(true, 0, 1000000), 
+                new ConstraintWrapper(true, 1, 10), 
+                new ConstraintWrapper(false, 1, 20));
         }
 
         public bool IsSatisfied(DataManagement.DataModel dataModel)
