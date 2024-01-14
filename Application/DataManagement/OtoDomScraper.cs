@@ -17,37 +17,22 @@ namespace DecisionSystemForRealEastateInvestment.Application.DataManagement
     {
         private string baseURL = "https://www.otodom.pl/pl/wyniki/sprzedaz/mieszkanie";
         public string City { get; set; }
-        public string Region { get; set; }
+        public string Voivodeship { get; set; }
 
-        public OtoDomController(string city, string region)
+        public OtoDomController(string city)
         {
             City = city;
-            Region = region;
+            var voivodeship = Utils.GetCityVoivodeship(City);
+            if (voivodeship == null)
+            {
+                throw new ApplicationException($"no voivodeship found for {City}");
+            }
+            Voivodeship = voivodeship;
         }
 
         public string BuildQueryURL(int pageNumber)
         {
-            return $"{baseURL}/{Region}/{City}/{City}/{City}?viewType=listing&page={pageNumber}";
-        }
-
-        public static string EncodePolishToLatin(string input)
-        {
-            Dictionary<char, char> polishToLatinMap = new Dictionary<char, char>
-        {
-            {'ą', 'a'}, {'ć', 'c'}, {'ę', 'e'}, {'ł', 'l'},
-            {'ń', 'n'}, {'ó', 'o'}, {'ś', 's'}, {'ź', 'z'},
-            {'ż', 'z'}, {'Ą', 'A'}, {'Ć', 'C'}, {'Ę', 'E'},
-            {'Ł', 'L'}, {'Ń', 'N'}, {'Ó', 'O'}, {'Ś', 'S'},
-            {'Ź', 'Z'}, {'Ż', 'Z'}
-        };
-
-            char[] output = new char[input.Length];
-            for (int i = 0; i < input.Length; i++)
-            {
-                output[i] = polishToLatinMap.ContainsKey(input[i]) ? polishToLatinMap[input[i]] : input[i];
-            }
-
-            return new string(output);
+            return Utils.EncodePolishToLatin($"{baseURL}/{Voivodeship}/{City}/{City}/{City}?viewType=listing&page={pageNumber}").ToLower();
         }
 
         public async Task Run(OtoDomScraper scraper, int startPage, int endPage)
@@ -58,12 +43,15 @@ namespace DecisionSystemForRealEastateInvestment.Application.DataManagement
             }
             if (endPage < startPage)
             {
-                throw new Exception("endPage has to be >= startPage");
+                throw new ApplicationException("endPage has to be >= startPage");
             }
+
+
             var scrapingTasks = new List<Task>();
             for (int i = startPage; i <= endPage; i++)
             {
                 string url = BuildQueryURL(i);
+                Console.WriteLine(url);
                 scrapingTasks.Add(scraper.Scrape(url));
             }
 

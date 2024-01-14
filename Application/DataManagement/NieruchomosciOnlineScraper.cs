@@ -29,19 +29,20 @@ namespace DecisionSystemForRealEastateInvestment.Application.DataManagement
             }
             if (endPage < startPage)
             {
-                throw new Exception("endPage has to be >= startPage");
+                throw new ApplicationException("endPage has to be >= startPage");
             }
             var scrapingTasks = new List<Task>();
             for (int i = startPage; i <= endPage; i++)
             {
                 string url = BuildQueryURL(i);
+                Console.WriteLine(url);
                 scrapingTasks.Add(scraper.Scrape(url));
             }
 
             await Task.WhenAll(scrapingTasks);
         }
     }
-    internal class NieruchomosciOnlineScraper // : IScraper
+    internal class NieruchomosciOnlineScraper : IScraper
     {
         private readonly HttpClient _httpClient = new();
         private readonly ConcurrentBag<DataModel> _dataModels = new();
@@ -71,13 +72,13 @@ namespace DecisionSystemForRealEastateInvestment.Application.DataManagement
             }
         }
 
-        private async Task<HashSet<string>?> ExtractOfferLinksAsync(string url)
+        private async Task<HashSet<string>?> ExtractOfferLinksAsync(string url) 
         {
             var html = await _httpClient.GetStringAsync(url);
             var htmlDocument = new HtmlAgilityPack.HtmlDocument();
             htmlDocument.LoadHtml(html);
 
-            var links = htmlDocument.DocumentNode.SelectNodes("//a[starts-with(@href, 'https://krakow.nieruchomosci-online.pl/')]");
+            var links = htmlDocument.DocumentNode.SelectNodes($"//a[starts-with(@href, 'https://')]");
             if (links == null)
             {
                 return null;

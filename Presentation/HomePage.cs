@@ -114,14 +114,19 @@ namespace DecisionSystemForRealEastateInvestment
             resultsPanel.Controls.Clear();
             string city = CintyNameTextBox.Text;
             State.ProcessingText = $"Scraping NO for {city}";
-            NieruchomosciOnlineScraper scraper = new();
-            NieruchomosciOnlineController controller = new(city: city);
-            await controller.Run(scraper, 1, 2);
-            State.results.AddRange(scraper.DataModels);
+            NieruchomosciOnlineScraper NOscraper = new();
+            NieruchomosciOnlineController NOcontroller = new(city: city.Trim());
+            await NOcontroller.Run(NOscraper, 1, 2);
+            State.results.AddRange(NOscraper.DataModels);
 
             State.ProcessingText = $"Scraping OTODOM for {city}";
 
-            //TODO podpi¹æ drugi scraper
+            OtoDomScraper OTODOMscraper = new();
+            OtoDomController OTODOMcontroller = new(city: city.Trim());
+            await OTODOMcontroller.Run(OTODOMscraper, 1, 2);
+            State.results.AddRange(OTODOMscraper.DataModels);
+
+            Console.WriteLine("Scraping is done.");
 
             State.IsScraping = false;
             State.ProcessingText = null;
