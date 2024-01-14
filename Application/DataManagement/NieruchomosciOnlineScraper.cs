@@ -258,15 +258,8 @@ namespace DecisionSystemForRealEastateInvestment.Application.DataManagement
                 {
                     return number;
                 }
-                else
-                {
-                    return null;
-                }
             }
-            else
-            {
-                return null;
-            }
+            return null;
         }
 
         private static bool? CheckParkingAvailability(HtmlAgilityPack.HtmlDocument htmlDocument)
