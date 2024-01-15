@@ -4,6 +4,10 @@ This repository consist of a Decision support system for Real Estate Investment.
 2 Web scrapers were implemented for various web-pages. One may adjust personal preference for a choice, including constraints and relative preferences.
 Semi-optimal results are propsed within application.
 New version will be released in a weeks to come.
+Future version will adress the following issues:
+- Local memory for already seen offers
+- Scraper as a stream generator
+- Reworked GUI
 
 Credits to [Dominik](https://github.com/dominik-air) for prolific collaboration.
 
