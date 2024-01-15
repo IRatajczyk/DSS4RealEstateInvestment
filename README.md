@@ -1,4 +1,4 @@
-# DecisionSystemForRealEastateInvestment
+# DecisionSupportSystemForRealEastateInvestment
 
 This repository consist of a Decision support system for Real Estate Investment.
 2 Web scrapers were implemented for various web-pages. One may adjust personal preference for a choice, including constraints and relative preferences.
