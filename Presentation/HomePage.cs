@@ -108,8 +108,9 @@ namespace DecisionSystemForRealEastateInvestment
         }
 
 
-        private async void Scrape()
+        private async Task Scrape()
         {
+            State.results.Clear();
             State.IsScraping = true;
             resultsPanel.Controls.Clear();
             string city = CintyNameTextBox.Text;
@@ -154,7 +155,7 @@ namespace DecisionSystemForRealEastateInvestment
                 StringBuilder text = new(State.ProcessingText);
                 for (int i = 0; i < State.Counter; i++)
                 {
-                    text = text.Append(".");
+                    text = text.Append('.');
                 }
 
                 this.DescriptionLabel.Visible = true;
@@ -180,6 +181,13 @@ namespace DecisionSystemForRealEastateInvestment
             FillResultsPanel(topsis.GetBestOfferts(State.results.Where(State.PreferenceManager.IsSatisfied).ToList()));
         }
 
+        private void VisualizationButton_Click(object sender, EventArgs e)
+        {
+            var visualization = new Presentation.VisualizationView();
+            visualization.Show();
+            visualization.FillChart(State.results.Where(State.PreferenceManager.IsSatisfied).ToList());
+        }
+
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
 
@@ -190,6 +198,16 @@ namespace DecisionSystemForRealEastateInvestment
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CintyNameTextBox_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void HomePage_Load(object sender, EventArgs e)
         {
 
         }

@@ -256,6 +256,7 @@
             // maxArea
             // 
             maxArea.Location = new Point(267, 213);
+            maxArea.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
             maxArea.Name = "maxArea";
             maxArea.Size = new Size(75, 27);
             maxArea.TabIndex = 19;
@@ -273,6 +274,7 @@
             // minArea
             // 
             minArea.Location = new Point(143, 213);
+            minArea.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
             minArea.Name = "minArea";
             minArea.Size = new Size(75, 27);
             minArea.TabIndex = 17;

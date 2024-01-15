@@ -40,11 +40,12 @@
             SerializeResults = new Button();
             ExitButton = new Button();
             ProcessingTimer = new System.Windows.Forms.Timer(components);
+            VisualizationButton = new Button();
             SuspendLayout();
             // 
             // SpecifyPreferencesButton
             // 
-            SpecifyPreferencesButton.Location = new Point(353, 435);
+            SpecifyPreferencesButton.Location = new Point(353, 421);
             SpecifyPreferencesButton.Name = "SpecifyPreferencesButton";
             SpecifyPreferencesButton.Size = new Size(210, 29);
             SpecifyPreferencesButton.TabIndex = 1;
@@ -62,16 +63,17 @@
             // 
             // CintyNameTextBox
             // 
-            CintyNameTextBox.Location = new Point(353, 367);
+            CintyNameTextBox.Location = new Point(353, 353);
             CintyNameTextBox.Name = "CintyNameTextBox";
             CintyNameTextBox.Size = new Size(210, 27);
             CintyNameTextBox.TabIndex = 3;
             CintyNameTextBox.Text = "Warszawa";
+            CintyNameTextBox.TextChanged += CintyNameTextBox_TextChanged;
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(353, 344);
+            label1.Location = new Point(353, 330);
             label1.Name = "label1";
             label1.Size = new Size(34, 20);
             label1.TabIndex = 4;
@@ -79,7 +81,7 @@
             // 
             // ScraperButton
             // 
-            ScraperButton.Location = new Point(353, 400);
+            ScraperButton.Location = new Point(353, 386);
             ScraperButton.Name = "ScraperButton";
             ScraperButton.Size = new Size(210, 29);
             ScraperButton.TabIndex = 0;
@@ -99,7 +101,7 @@
             // 
             // ButtonVIKOR
             // 
-            ButtonVIKOR.Location = new Point(353, 470);
+            ButtonVIKOR.Location = new Point(353, 456);
             ButtonVIKOR.Name = "ButtonVIKOR";
             ButtonVIKOR.Size = new Size(102, 29);
             ButtonVIKOR.TabIndex = 6;
@@ -109,7 +111,7 @@
             // 
             // ButtonTOPSIS
             // 
-            ButtonTOPSIS.Location = new Point(461, 470);
+            ButtonTOPSIS.Location = new Point(461, 456);
             ButtonTOPSIS.Name = "ButtonTOPSIS";
             ButtonTOPSIS.Size = new Size(102, 29);
             ButtonTOPSIS.TabIndex = 7;
@@ -119,7 +121,7 @@
             // 
             // SerializeResults
             // 
-            SerializeResults.Location = new Point(353, 528);
+            SerializeResults.Location = new Point(353, 526);
             SerializeResults.Name = "SerializeResults";
             SerializeResults.Size = new Size(210, 29);
             SerializeResults.TabIndex = 8;
@@ -129,7 +131,7 @@
             // 
             // ExitButton
             // 
-            ExitButton.Location = new Point(353, 563);
+            ExitButton.Location = new Point(353, 561);
             ExitButton.Name = "ExitButton";
             ExitButton.Size = new Size(210, 29);
             ExitButton.TabIndex = 9;
@@ -143,11 +145,22 @@
             ProcessingTimer.Interval = 500;
             ProcessingTimer.Tick += ProcessingTimer_Tick;
             // 
+            // VisualizationButton
+            // 
+            VisualizationButton.Location = new Point(353, 491);
+            VisualizationButton.Name = "VisualizationButton";
+            VisualizationButton.Size = new Size(210, 29);
+            VisualizationButton.TabIndex = 10;
+            VisualizationButton.Text = "Visualize";
+            VisualizationButton.UseVisualStyleBackColor = true;
+            VisualizationButton.Click += VisualizationButton_Click;
+            // 
             // HomePage
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(575, 612);
+            Controls.Add(VisualizationButton);
             Controls.Add(ExitButton);
             Controls.Add(SerializeResults);
             Controls.Add(ButtonTOPSIS);
@@ -160,6 +173,7 @@
             Controls.Add(SpecifyPreferencesButton);
             Name = "HomePage";
             Text = "DSS4HI";
+            Load += HomePage_Load;
             ResumeLayout(false);
             PerformLayout();
         }
@@ -176,5 +190,6 @@
         private Button SerializeResults;
         private Button ExitButton;
         private System.Windows.Forms.Timer ProcessingTimer;
+        private Button VisualizationButton;
     }
 }
